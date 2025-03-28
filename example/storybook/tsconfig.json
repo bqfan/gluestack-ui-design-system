@@ -12,9 +12,11 @@
     "declaration": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "react",
+    //"jsx": "react",
+    "jsx": "react-jsx",
     "lib": ["esnext", "dom"],
     "module": "esnext",
     "moduleResolution": "node",
@@ -30,5 +32,5 @@
     "target": "esnext"
   },
   "exclude": ["lib", "node_modules", "storybookDocsComponents", "__tests__"],
-  "include": ["src"]
+  "include": ["src/**/*", "storybook-config-entry.js"]
 }
