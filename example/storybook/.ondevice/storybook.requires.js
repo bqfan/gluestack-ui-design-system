@@ -81,10 +81,10 @@ const getStories = () => {
     require('../src/components/primitives/Toast/Toast.stories.tsx'),
     require('../src/components/composites/Tooltip/Tooltip.stories.tsx'),
     require('../src/components/primitives/VStack/VStack.stories.tsx'),
-    require('../src/components/primitives/LinearGradient/LinearGradient.stories.tsx'),
-    require('../src/components/primitives/Tabs/Tabs.stories.tsx'),
+    // require('../src/components/primitives/LinearGradient/LinearGradient.stories.tsx'),
+    // require('../src/components/primitives/Tabs/Tabs.stories.tsx'),
     require('../src/components/primitives/Image/Image.stories.tsx'),
-    require('../src/components/custom/IconButton/IconButton.stories.tsx'),
+    // require('../src/components/custom/IconButton/IconButton.stories.tsx'),
   ];
 };
 
