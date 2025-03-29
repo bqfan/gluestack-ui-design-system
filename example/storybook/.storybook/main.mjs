@@ -10,9 +10,9 @@ const __dirname = path.dirname(__filename);
 // console.log(path.resolve('../../', 'node_modules/@gluestack-style/react'));
 export default {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
-  core: {
-    builder: 'webpack5', // Ensure Webpack 5 is used
-  },
+  // core: {
+  //   builder: 'webpack5', // Ensure Webpack 5 is used
+  // },
 
   addons: [
     'storybook-dark-mode',
@@ -21,14 +21,13 @@ export default {
     '@storybook/addon-react-native-web',
     //'@storybook/addon-docs',
     //'@geometricpanda/storybook-addon-iframe',
-    '@storybook/addon-mdx-gfm',
     '@chromatic-com/storybook',
   ],
 
   staticDirs: ['../public'],
 
   framework: {
-    name: '@storybook/react-webpack5',
+    name: '@storybook/react-vite',
     options: {},
   },
 
@@ -64,11 +63,11 @@ export const webpackFinal = async (config, { configType }) => {
     use: {
       loader: 'babel-loader',
       options: {
-        presets: [
-          '@babel/preset-env',
-          '@babel/preset-react',
-          '@babel/preset-typescript',
-        ],
+        // presets: [
+        //   '@babel/preset-env',
+        //   '@babel/preset-react',
+        //   '@babel/preset-typescript',
+        // ],
       },
     },
   });

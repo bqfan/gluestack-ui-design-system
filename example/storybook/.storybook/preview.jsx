@@ -1,3 +1,4 @@
+import React from 'react';
 import { addParameters } from '@storybook/client-api';
 import { DocsContainer } from '@storybook/addon-docs/blocks';
 import { config } from '@custom-ui/config';
