@@ -1,106 +1,106 @@
-import { dirname, join } from 'node:path';
-//import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import { mergeConfig } from 'vite';
 
-// Get the current directory from the module's URL
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// console.log(path.resolve('../../', 'node_modules/@gluestack-style/react'));
 export default {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
-  // core: {
-  //   builder: 'webpack5', // Ensure Webpack 5 is used
-  // },
-
   addons: [
     'storybook-dark-mode',
     '@storybook/addon-links',
     '@storybook/addon-essentials',
-    '@storybook/addon-react-native-web',
-    //'@storybook/addon-docs',
-    //'@geometricpanda/storybook-addon-iframe',
+    '@storybook/addon-interactions',
     '@chromatic-com/storybook',
   ],
-
   staticDirs: ['../public'],
-
   framework: {
     name: '@storybook/react-vite',
     options: {},
   },
-
   typescript: {
-    reactDocgen: 'none',
+    reactDocgen: false,
   },
-
   docs: {
     autodocs: true,
   },
-};
-
-export const webpackFinal = async (config, { configType }) => {
-  // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
-  // You can change the configuration based on that.
-  // 'PRODUCTION' is used when building the static version of storybook.
-
-  // Make whatever fine-grained changes you need
-  // config.module.rules.push({
-  //   test: /\.scss$/,
-  //   use: ['style-loader', 'css-loader', 'sass-loader'],
-  //   include: path.resolve(dirname, '../'),
-  // });
-
-  // config.module.rules.push({
-  //   test: /\.(js|ts|tsx)$/,
-  //   // include: [path.resolve('../../', 'node_modules/@gluestack-style/react')],
-  //   use: 'babel-loader',
-  // });
-  config.module.rules.push({
-    test: /\.jsx?$/,
-    exclude: /node_modules/,
-    use: {
-      loader: 'babel-loader',
-      options: {
-        // presets: [
-        //   '@babel/preset-env',
-        //   '@babel/preset-react',
-        //   '@babel/preset-typescript',
-        // ],
+  async viteFinal(config) {
+    // Create clean optimizeDeps object without any disabled property
+    const cleanOptimizeDeps = {
+      exclude: [
+        'react-native',
+        '@gluestack-ui/button',
+        '@gluestack-ui/react-native-aria',
+      ],
+      esbuildOptions: {
+        loader: {
+          '.js': 'jsx',
+        },
       },
-    },
-  });
+    };
 
-  config.resolve.alias = {
-    ...config.resolve.alias,
-    '@custom-ui/themed': path.join(__dirname, '../../../packages/themed/src'),
-    '@custom-ui/config': path.join(
-      __dirname,
-      '../../../packages/config/src/gluestack-ui.config'
-    ),
-  };
+    // Create the final config by merging with your customizations
+    const finalConfig = mergeConfig(config, {
+      optimizeDeps: cleanOptimizeDeps,
+      plugins: [
+        ...config.plugins,
+        {
+          name: 'react-native-web-resolver',
+          resolveId(source) {
+            if (source === 'InputAccessoryView') {
+              return join(__dirname, './rn-mocks/InputAccessoryView.js');
+            }
+          },
+        },
+      ],
+      define: {
+        'process.env': {},
+        '__DEV__': true,
+      },
+      resolve: {
+        alias: {
+          '@custom-ui/themed': join(__dirname, '../../../packages/themed/src'),
+          '@custom-ui/config': join(
+            __dirname,
+            '../../../packages/config/src/gluestack-ui.config'
+          ),
+          '@gluestack-ui/button': join(
+            __dirname,
+            '../../../node_modules/@gluestack-ui/button'
+          ),
+          '@gluestack-ui/react-native-aria': join(
+            __dirname,
+            '../../../node_modules/@gluestack-ui/react-native-aria'
+          ),
+          'react-native': 'react-native-web',
+          'InputAccessoryView': join(
+            __dirname,
+            './rn-mocks/InputAccessoryView.js'
+          ),
+        },
+      },
+      // optimizeDeps: {
+      //   // Only specify what you need - no disabled property
+      //   exclude: [
+      //     'react-native',
+      //     '@gluestack-ui/button',
+      //     '@gluestack-ui/react-native-aria',
+      //   ],
+      //   esbuildOptions: {
+      //     loader: {
+      //       '.js': 'jsx',
+      //     },
+      //   },
+      // },
+    });
 
-  config.resolve.alias = {
-    ...config.resolve.alias,
-    '@custom-ui/config': path.join(
-      __dirname,
-      '../../../packages/config/src/gluestack-ui.config'
-    ),
-  };
+    // Clean up any undefined or null values that might cause issues
+    Object.keys(finalConfig.optimizeDeps).forEach((key) => {
+      if (finalConfig.optimizeDeps[key] == null) {
+        delete finalConfig.optimizeDeps[key];
+      }
+    });
 
-  config.module.rules.push({
-    test: /\.mjs$/,
-    include: /node_modules/,
-    type: 'javascript/auto',
-  });
-
-  config.resolve.extensions.push('.ts', '.tsx');
-
-  // Return the altered config
-  return config;
+    return finalConfig;
+  },
 };
-
-// function getAbsolutePath(value) {
-//   return dirname(require.resolve(join(value, 'package.json')));
-// }

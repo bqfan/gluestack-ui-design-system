@@ -75,10 +75,6 @@ module.exports = {
       dirname,
       '../../packages/pressable/src'
     ),
-    '@gluestack-ui/react-native-aria': path.join(
-      dirname,
-      '../../packages/react-native-aria/src'
-    ),
     '@gluestack-ui/toast': path.join(dirname, '../../packages/toast/src'),
     '@gluestack-ui/utils': path.join(dirname, '../../packages/utils/src'),
     '@gluestack-ui/tabs': path.join(dirname, '../../packages/tabs/src'),
